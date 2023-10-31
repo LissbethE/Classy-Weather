@@ -1,6 +1,5 @@
 import React from "react";
 import Weather from "./components/Weather";
-import Input from "./components/Input";
 
 function convertToFlag(countryCode) {
   const codePoints = countryCode
@@ -13,17 +12,19 @@ function convertToFlag(countryCode) {
 
 //////////////////////////////////
 class App extends React.Component {
-  state = {
-    location: "",
-    isLoading: false,
-    displayLocation: "",
-    weather: {},
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      location: "",
+      isLoading: false,
+      displayLocation: "",
+      weather: {},
+    };
+    this.handleFetchWeather = this.handleFetchWeather.bind(this);
+  }
 
   //////////////////////////////////
-  fetchWeather = async () => {
-    if (this.state.location < 2) return this.setState({ weather: {} });
-
+  async handleFetchWeather() {
     try {
       this.setState({ isLoading: true });
 
@@ -32,7 +33,7 @@ class App extends React.Component {
         `https://geocoding-api.open-meteo.com/v1/search?name=${this.state.location}`
       );
       const geoData = await geoRes.json();
-      //console.log(geoData);
+      console.log(geoData);
 
       if (!geoData.results) throw new Error("Location not found");
 
@@ -59,23 +60,6 @@ class App extends React.Component {
     } finally {
       this.setState({ isLoading: false });
     }
-  };
-
-  setLocation = (e) => this.setState({ location: e.target.value });
-
-  //////////////////////////////////
-  // useEffect []
-  componentDidMount() {
-    // Get location in localstorage
-    this.setState({ location: localStorage.getItem("location" || "") });
-  }
-
-  // useEffect [location] - this method isn't called on mount, only on re-render
-  componentDidUpdate(prevPros, prevState) {
-    if (this.state.location !== prevState.location) this.fetchWeather();
-
-    // Saving it localstore
-    localStorage.setItem("location", this.state.location);
   }
 
   //////////////////////////////////
@@ -84,14 +68,22 @@ class App extends React.Component {
       <div className="app">
         <h1>Classy Weather</h1>
 
-        <Input
-          location={this.state.location}
-          onChangeLocation={this.setLocation}
-        />
+        <div>
+          <input
+            type="text"
+            placeholder="Search from location..."
+            value={this.state.location}
+            onChange={(e) => this.setState({ location: e.target.value })}
+          />
+        </div>
+
+        <button type="button" onClick={this.handleFetchWeather}>
+          Get Weather
+        </button>
 
         {this.state.isLoading && <p className="loader">Loading...</p>}
 
-        {this.state.weather?.weathercode && (
+        {this.state.weather.weathercode && (
           <Weather
             weather={this.state.weather}
             location={this.state.displayLocation}
