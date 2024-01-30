@@ -18,7 +18,7 @@
 
 </br>
 
-<p align=center>🌐The online site: <a href="" target="_blank">☀️Classy Weather</a></p>
+<p align=center>🌐The online site: <a href="https://tb-react-classy-weather.netlify.app/" target="_blank">☀️Classy Weather</a></p>
 
 </br>
 
